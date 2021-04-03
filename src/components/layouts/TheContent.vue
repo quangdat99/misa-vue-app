@@ -1,6 +1,6 @@
 <template>
   <div id="content">
-   <router-view></router-view>
+    <router-view></router-view>
   </div>
 </template>
 
@@ -8,8 +8,7 @@
 <script>
 export default {
   name: "Content",
-  components: {
-  },
+  components: {},
 };
 </script>
 
@@ -21,8 +20,6 @@ export default {
   left: 200px;
   right: 0px;
   bottom: 0px;
-  /* background-color: yellow; */
-  /* padding-left:  24px; */
   padding: 24px;
 }
 

@@ -4,6 +4,7 @@
       <div class="page-left">Danh sách khách hàng</div>
       <div class="page-right">
         <button id="btnAdd" class="btn-default" @click="btnAddOnClick()">
+          <div class="icon-add"></div>
           Thêm khách hàng
         </button>
       </div>
@@ -208,5 +209,14 @@ export default {
 .m-row input,
 select {
   margin-top: 4px;
+}
+.icon-add {
+  transform: translateY(3px);
+  display: inline-block;
+  height: 20px;
+  width: 20px;
+  margin-right: 8px;
+  background-size: contain;
+  background-image: url("../../assets/icon/add.png");
 }
 </style>

@@ -1,9 +1,11 @@
-@import './base/button.css';
-@import './base/combobox.css';
-@import './base/dialog.css';
-@import './base/icon.css';
-@import './base/input.css';
-@import './base/table.css';
+@import "./base/button.css";
+@import "./base/combobox.css";
+@import "./base/dialog.css";
+@import "./base/icon.css";
+@import "./base/input.css";
+@import "./base/table.css";
+/* @import "./base/select.css"; */
+
 body {
   margin: 0;
 }
