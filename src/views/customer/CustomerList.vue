@@ -122,24 +122,7 @@ export default {
       isHideDialogDetail: true,
       customerId: null,
       detailFormMode: null,
-      customers: [
-        {
-          CustomerId: 1,
-          FullName: "Nguyễn Văn Mạnh",
-        },
-        {
-          CustomerId: 2,
-          FullName: "Nguyễn Văn Mạnh",
-        },
-        {
-          CustomerId: 3,
-          FullName: "Nguyễn Văn Mạnh",
-        },
-        {
-          CustomerId: 4,
-          FullName: "Nguyễn Văn Mạnh",
-        },
-      ],
+      customers: [],
     };
   },
 };
@@ -160,6 +143,10 @@ export default {
 .page-title .page-left {
   font-size: 24px;
   font-weight: bold;
+}
+
+.paging-bar {
+  border-top: 4px solid #bbbbbb;
 }
 
 .toolbar {

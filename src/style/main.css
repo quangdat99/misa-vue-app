@@ -4,6 +4,7 @@
 @import "./base/icon.css";
 @import "./base/input.css";
 @import "./base/table.css";
+@import "./layout/content.css";
 /* @import "./base/select.css"; */
 
 body {

@@ -1,50 +1,91 @@
-
-#content{
+#content {
     position: absolute;
     top: 60px;
     left: 200px;
     right: 0px;
     bottom: 0px;
-    /* background-color: yellow; */
-    /* padding-left:  24px; */
     padding: 24px;
 }
 
-#content .paging-bar {
-    height: 56px;
+.paging {
+    position: absolute;
+    bottom: 0;
+    height: 60px;
+    left: 24px;
+    right: 24px;
+    border-top: 4px solid #bbbbbb;
 }
 
-.paging-bar {
-    border-top: 1px solid #bbbbbb;
-    position: relative;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 0 16px;
-    z-index: 1 !important;
+.paging .paging-left {
+    position: absolute;
+    left: 20px;
+    top: 20px;
 }
 
-.btn-pagenumber.btn-pagenumber-selected, .btn-pagenumber-selected:hover {
-    background-color: #019160;
-    color: #ffffff;
+.paging .paging-right {
+    position: absolute;
+    right: 20px;
+    top: 20px;
 }
 
-.btn-pagenumber {
-    width: 30px;
-    height: 30px;
-    margin: 0 4px;
-    border: 1px solid #ccc;
+.paging-center {
+    position: absolute;
+    transform: translate(-50%, -50%);
+    top: 50%;
+    left: 50%;
+}
+
+.paging-center .btn-firstpage {
+    display: inline-block;
+    cursor: pointer;
+    transform: translate(0px, 8px);
+}
+
+.paging-center .btn-lastpage {
+    display: inline-block;
+    cursor: pointer;
+    transform: translate(0px, 8px);
+}
+
+.paging-center .btn-next-page {
+    display: inline-block;
+    cursor: pointer;
+    transform: translate(0px, 8px);
+    margin-left: 10px;
+}
+
+.paging-center .btn-prev-page {
+    display: inline-block;
+    cursor: pointer;
+    transform: translate(0px, 8px);
+}
+
+.btn-firstpage,
+.btn-lastpage,
+.btn-next-page,
+.btn-prev-page:hover {
+}
+
+.paging-center .btn-page {
+    display: inline-block;
+}
+
+.paging-center .btn-page .btn-page-index {
+    display: inline-block;
     border-radius: 50%;
-    background-color: #e9ebee;
-    cursor: pointer !important;
+    border: 1px solid #bbbbbb;
+    padding: 6px;
+    background-color: #e5e5e5;
+    width: 17px;
+    text-align: center;
+    margin-left: 10px;
+    cursor: pointer;
 }
 
-.paging-bar .paging-record-info {
-    position: absolute;
-    left: 16px;
+.paging-center .btn-page .btn-page-index:hover {
+    background-color: #ffffff;
 }
-
-.paging-bar .paging-record-option {
-    position: absolute;
-    right: 16px;
+.paging-center .btn-page .active {
+    background-color: #019160 !important;
+    color: #ffffff;
 }

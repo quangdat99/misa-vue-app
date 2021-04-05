@@ -1,14 +1,13 @@
-
 table {
     border-collapse: collapse;
 }
 
-table tr{
+table tr {
     border-bottom: 1px solid #bbb;
     height: 48px;
 }
 
-table thead th{
+table thead th {
     text-align: left;
     position: sticky;
     top: 0;
@@ -17,22 +16,26 @@ table thead th{
     box-shadow: 0 1px 1px -1px #bbb;
 }
 
-table thead{
+table thead {
     border-bottom: 1px solid #bbb;
 }
 
-th,td{
+th,
+td {
     padding-left: 10px;
     padding-right: 10px;
 }
 
-th:first-child, th:last-child, td:first-child, td:last-child{
+th:first-child,
+th:last-child,
+td:first-child,
+td:last-child {
     padding-left: 16px;
 }
 
-table tr{
+table tr {
     cursor: pointer;
 }
-table tr:hover{
+table tr:hover {
     background-color: #f0f0f0;
 }

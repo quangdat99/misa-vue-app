@@ -73,9 +73,10 @@
   margin-right: 16px;
   padding-bottom: 10px;
   cursor: pointer;
+  transform: translateY(-3px);
 }
 .right .right-option {
-  transform: translateY(6px);
+  transform: translateY(4px);
   margin-right: 16px;
   cursor: pointer;
   height: 24px;
