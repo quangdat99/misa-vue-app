@@ -148,7 +148,14 @@
               </div>
               <div class="m-col">
                 <label>Mức lương cơ bản</label>
-                <input id="txtSalary" type="text" v-model="employee.Salary" />
+                <!-- <input id="txtSalary" type="text" v-model="employee.Salary" /> -->
+                <input
+                  id="txtSalary"
+                  type="text"
+                  style="text-align: right"
+                  v-model="employee.Salary"
+                />
+                <span class="unit"> (VNĐ)</span>
               </div>
             </div>
             <div class="m-row">
@@ -181,13 +188,16 @@
 <script>
 import axios from "axios";
 import moment from "moment";
+import $ from "jquery";
+
 export default {
   props: {
     isHide: { type: Boolean, default: true },
     employeeId: { type: String, default: null },
-    formMode: { type: Number, default: null },
+    formMode: { type: String, default: null },
   },
   created() {},
+
   watch: {
     employeeId: function () {
       // Lấy dữ liệu từ Api:
@@ -202,35 +212,90 @@ export default {
             "YYYY-MM-DD"
           );
           this.JoinDate = moment(this.employee.JoinDate).format("YYYY-MM-DD");
-          console.log(response.data);
         })
         .catch((res) => {
           alert(res.status);
         });
     },
   },
+  updated() {
+    if (this.formMode == "add") {
+      $(".body-right input, .body-right select").each(function () {
+        $(this).val(null);
+      });
+    }
+    if (this.isHide == false) {
+      $("#txtEmployeeCode").focus();
+    }
+  },
   methods: {
     btnCloseOnClick() {
       this.$emit("btnAddOnClick", true);
     },
-    /**
-     * Thực hiện cất dữ liệu
-     * CreatedBy: NVMANH (29/03/2021)
-     * ModifiedBy: NVThang - sửa lại cơ chế cất dữ liệu (30/03/2021)
-     * ModifiedBy: NVThang - sửa lại cơ chế cất dữ liệu (30/03/2021)
-     */
-    btnSaveOnClick() {
-      // Lấy id của khách hàng:
-      // var employeeID = this.employeeID;
-      // Kiểm tra trạng thái của form (là thêm mới hay là sửa):
-      // Gọi service thực hiện cất dữ liệu:
-      if (this.formMode == "add") {
-        axios.post("", this.employee);
-      } else {
-        axios.post("", this.employee);
-      }
 
-      // Kiểm tra kết quả của việc cất dữ liệu"
+    btnSaveOnClick() {
+      var EmployeeCode = $("#txtEmployeeCode").val();
+      var FullName = $("#txtFullName").val();
+      var DateOfBirth = $("#dtDateOfBirth").val();
+      var Gender = $("#cbGender").val();
+      var IdentityNumber = $("#txtIdentityNumber").val();
+      var IdentityDate = $("#txtIdentityDate").val();
+      var IdentityPlace = $("#txtIdentityPlace").val();
+      var Email = $("#txtEmail").val();
+      var PhoneNumber = $("#txtPhoneNumber").val();
+      var PositionId = $("#cbPositionId").val();
+      var DepartmentId = $("#cbDepartmentId").val();
+      var PersonalTaxCode = $("#txtPersonalTaxCode").val();
+      var Salary = $("#txtSalary").val();
+      var JoinDate = $("#dtJoinDate").val();
+      var WorkStatus = $("#cbWorkStatus").val();
+
+      var newEmployee = {
+        EmployeeCode: EmployeeCode,
+        FullName: FullName,
+        DateOfBirth: DateOfBirth,
+        Gender: Gender,
+        IdentityNumber: IdentityNumber,
+        IdentityDate: IdentityDate,
+        IdentityPlace: IdentityPlace,
+        Email: Email,
+        PhoneNumber: PhoneNumber,
+        PositionId: PositionId,
+        DepartmentId: DepartmentId,
+        PersonalTaxCode: PersonalTaxCode,
+        Salary: Salary,
+        JoinDate: JoinDate,
+        WorkStatus: WorkStatus,
+      };
+
+      if (this.formMode == "add") {
+        let seft = this;
+
+        axios
+          .post("http://api.manhnv.net/v1/employees/", newEmployee)
+          .then(function (response) {
+            console.log(response);
+            seft.$emit("btnAddOnClick", true);
+          })
+          .catch(function (error) {
+            console.log(error);
+          });
+      } else if (this.formMode == "update") {
+        let seft = this;
+        axios
+          .put(
+            "http://api.manhnv.net/v1/employees/" + this.employeeId,
+            newEmployee
+          )
+          .then(function (response) {
+            console.log(response);
+            seft.$emit("btnAddOnClick", true);
+          })
+          .catch(function (error) {
+            console.log(error);
+            seft.$emit("btnAddOnClick", true);
+          });
+      }
     },
   },
   data() {
@@ -244,6 +309,15 @@ export default {
 };
 </script>
 <style scoped>
+#txtSalary {
+  padding-right: 60px;
+}
+.unit {
+  position: absolute;
+  top: 31px;
+  right: 20px;
+  color: #000000 !important;
+}
 .m-col {
   width: 50%;
   float: left;

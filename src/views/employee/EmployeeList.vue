@@ -16,24 +16,44 @@
         style="width: 360px"
         placeholder="Tìm kiếm theo Mã, Tên hoặc Số điện thoại"
       />
-      <div class="custom-select" style="width: 200px; margin-left: 20px">
+      <div class="custom-select" style="width: 230px; margin-left: 20px">
         <select name="" id="">
           <option value="0">Tất cả phòng ban</option>
-          <option value="1">2</option>
-          <option value="2">3</option>
+          <option value="3700cc49-55b5-69ea-4929-a2925c0f334d">Giám đốc</option>
+          <option value="148ed882-32b8-218e-9c20-39c2f00615e8">
+            Nhân viên Marketting
+          </option>
+          <option value="25c6c36e-1668-7d10-6e09-bf1378b8dc91">Thu ngân</option>
         </select>
       </div>
-      <div class="custom-select" style="width: 200px; margin-left: 20px">
+      <div class="custom-select" style="width: 180px; margin-left: 20px">
         <select name="" id="">
           <option value="0">Tất cả vị trí</option>
-          <option value="1">Audi</option>
-          <option value="2">BMW</option>
-          <option value="3">Citroen</option>
+          <option value="17120d02-6ab5-3e43-18cb-66948daf6128">
+            Phòng đào tạo
+          </option>
+          <option value="4e272fc4-7875-78d6-7d32-6a1673ffca7c">
+            Phòng Công nghệ
+          </option>
+          <option value="469b3ece-744a-45d5-957d-e8c757976496">
+            Phòng nhân sự
+          </option>
+          <option value="142cb08f-7c31-21fa-8e90-67245e8b283e">
+            Phòng Marketting
+          </option>
         </select>
       </div>
 
-      <button class="btn-refresh"></button>
-      <button class="btn-delete"></button>
+      <button
+        id="btnRefresh"
+        class="btn-refresh"
+        @click="btnRefreshOnClick()"
+      ></button>
+      <button
+        id="btnDelete"
+        class="btn-delete"
+        @click="btnDeleteOnClick()"
+      ></button>
     </div>
     <div class="grid">
       <table id="tblListEmployee" class="table" width="100%" border="0">
@@ -56,6 +76,7 @@
             v-for="employee in employees"
             :key="employee.EmployeeId"
             @dblclick="rowOnDblClick(employee.EmployeeId)"
+            class="trEmployee"
           >
             <td>{{ employee.EmployeeCode }}</td>
             <td>{{ employee.FullName }}</td>
@@ -153,7 +174,7 @@
     <EmployeeDetail
       :isHide="isHideDialogDetail"
       :employeeId="employeeId"
-      :formMode="DetailFormMode"
+      :formMode="detailFormMode"
       @btnAddOnClick="btnAddOnClick"
     />
   </div>
@@ -162,6 +183,7 @@
 import axios from "axios";
 import EmployeeDetail from "./EmployeeDetail.vue";
 import moment from "moment";
+import $ from "jquery";
 
 export default {
   components: {
@@ -173,34 +195,62 @@ export default {
       this.employees = response.data;
     });
   },
+
   methods: {
+    btnDeleteOnClick() {
+      this.deleteTrue = !this.deleteTrue;
+      if (this.deleteTrue == true) {
+        console.log("DeleteOnClick");
+        $(".trEmployee").css("background-color", "#FFEBEB");
+        $(".trEmployee").hover(
+          function () {
+            $(this).css("background-color", "#F65454");
+          },
+          function () {
+            $(this).css("background-color", "#FFEBEB");
+          }
+        );
+      } else {
+        $(".trEmployee").unbind("mouseenter mouseleave");
+        $(".trEmployee").css("background-color", "");
+      }
+    },
+    btnRefreshOnClick() {
+      axios.get("http://api.manhnv.net/v1/employees").then((response) => {
+        console.log(response);
+        this.employees = response.data;
+      });
+    },
     btnAddOnClick(isShowDialog) {
+      this.detailFormMode = "add";
+
       if (isShowDialog == true) {
         this.isHideDialogDetail = true;
       } else {
         this.isHideDialogDetail = false;
       }
     },
-    /**
-     * Th
-     */
     rowOnDblClick(employeeId) {
-      this.employeeId = employeeId;
-      this.isHideDialogDetail = false;
-      this.detailFormMode = "update";
+      if (this.deleteTrue == true) {
+        let seft = this;
+        axios
+          .delete("http://api.manhnv.net/v1/employees/" + employeeId)
+          .then(function (response) {
+            seft.btnRefreshOnClick();
+            seft.deleteTrue = false;
+            $(".trEmployee").unbind("mouseenter mouseleave");
+            $(".trEmployee").css("background-color", "");
+            console.log(response);
+          })
+          .catch(function (error) {
+            console.log(error);
+          });
+      } else {
+        this.employeeId = employeeId;
+        this.isHideDialogDetail = false;
+        this.detailFormMode = "update";
+      }
     },
-  },
-  computed() {
-    // function formatDateDDMMYYYY(date) {
-    //   if (!date) {
-    //     return "";
-    //   }
-    //   var newDate = new Date(date);
-    //   var dateString = newDate.getDate();
-    //   var monthString = newDate.getMonth() + 1;
-    //   var year = newDate.getFullYear();
-    //   return `${dateString}/${monthString}/${year}`;
-    // }
   },
   data() {
     return {
@@ -209,6 +259,7 @@ export default {
       detailFormMode: null,
       employees: [],
       moment: moment,
+      deleteTrue: false,
     };
   },
   mounted() {
