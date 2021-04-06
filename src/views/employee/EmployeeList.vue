@@ -171,23 +171,50 @@
       </div>
       <div class="paging-right">10 khách hàng/trang</div>
     </div>
+    <div id="myModal" class="modal">
+      <!-- Modal content -->
+      <div class="modal-content">
+        <div class="modal-header">
+          <span class="close">&times;</span>
+          <div class="title">Xóa bản ghi</div>
+        </div>
+        <div class="modal-body">
+          <div class="warning-icon icon-left"></div>
+          <div class="content">Bạn chắc chắn muốn xóa</div>
+        </div>
+        <div class="modal-footer">
+          <div id="btnCancelEmployee" class="btn-default">Hủy</div>
+          <div
+            id="btnDeleteEmployee"
+            class="btn-default"
+            @click="modalDeleteOnClick(employeeId)"
+          >
+            Xóa
+          </div>
+        </div>
+      </div>
+    </div>
+
     <EmployeeDetail
       :isHide="isHideDialogDetail"
       :employeeId="employeeId"
       :formMode="detailFormMode"
       @btnAddOnClick="btnAddOnClick"
+      @btnRefreshOnClick="btnRefreshOnClick"
     />
   </div>
 </template>
 <script>
 import axios from "axios";
 import EmployeeDetail from "./EmployeeDetail.vue";
+// import Modal from "../../components/modals/Modal.vue";
 import moment from "moment";
 import $ from "jquery";
 
 export default {
   components: {
     EmployeeDetail,
+    // Modal,
   },
   created() {
     axios.get("http://api.manhnv.net/v1/employees").then((response) => {
@@ -232,24 +259,45 @@ export default {
     },
     rowOnDblClick(employeeId) {
       if (this.deleteTrue == true) {
-        let seft = this;
-        axios
-          .delete("http://api.manhnv.net/v1/employees/" + employeeId)
-          .then(function (response) {
-            seft.btnRefreshOnClick();
-            seft.deleteTrue = false;
-            $(".trEmployee").unbind("mouseenter mouseleave");
-            $(".trEmployee").css("background-color", "");
-            console.log(response);
-          })
-          .catch(function (error) {
-            console.log(error);
-          });
+        let seft1 = this;
+        $(".modal").css("display", "block");
+        $("#btnDeleteEmployee").on("click", function () {
+          let seft2 = seft1;
+          axios
+            .delete("http://api.manhnv.net/v1/employees/" + employeeId)
+            .then(function (response) {
+              seft2.btnRefreshOnClick();
+              seft2.deleteTrue = false;
+              $(".trEmployee").unbind("mouseenter mouseleave");
+              $(".trEmployee").css("background-color", "");
+              $(".modal").css("display", "none");
+              console.log(response);
+            })
+            .catch(function (error) {
+              console.log(error);
+              $(".modal").css("display", "none");
+            });
+        });
       } else {
         this.employeeId = employeeId;
         this.isHideDialogDetail = false;
         this.detailFormMode = "update";
       }
+    },
+    modalDeleteOnClick(employeeId) {
+      let seft = this;
+      axios
+        .delete("http://api.manhnv.net/v1/employees/" + employeeId)
+        .then(function (response) {
+          seft.btnRefreshOnClick();
+          seft.deleteTrue = false;
+          $(".trEmployee").unbind("mouseenter mouseleave");
+          $(".trEmployee").css("background-color", "");
+          console.log(response);
+        })
+        .catch(function (error) {
+          console.log(error);
+        });
     },
   },
   data() {
@@ -263,6 +311,30 @@ export default {
     };
   },
   mounted() {
+    // Get the modal
+    var modal = document.getElementById("myModal");
+
+    // Get the <span> element that closes the modal
+    var span = document.getElementsByClassName("close")[0];
+
+    // When the user clicks the button, open the modal
+    var cancle = document.getElementById("btnCancelEmployee");
+    // When the user clicks on <span> (x), close the modal
+    span.onclick = function () {
+      modal.style.display = "none";
+    };
+
+    cancle.onclick = function () {
+      modal.style.display = "none";
+    };
+
+    // When the user clicks anywhere outside of the modal, close it
+    window.onclick = function (event) {
+      if (event.target == modal) {
+        modal.style.display = "none";
+      }
+    };
+
     var x, i, j, l, ll, selElmnt, a, b, c;
     x = document.getElementsByClassName("custom-select");
     l = x.length;
@@ -337,6 +409,33 @@ export default {
 };
 </script>
 <style scope>
+.warning-icon {
+  height: 40px;
+  width: 40px;
+  background-size: contain;
+  border-radius: 50%;
+  background-repeat: no-repeat;
+  background-color: #e9ebee;
+  background-image: url("../../assets/img/warning.png");
+}
+#btnCancelEmployee {
+  position: absolute;
+  right: 150px;
+  top: 10px;
+  background-color: #e9ebee;
+  color: #000;
+  padding-left: 40px;
+  padding-right: 40px;
+}
+#btnDeleteEmployee {
+  position: absolute;
+  right: 24px;
+  top: 10px;
+  background-color: #f65454;
+  color: #fff;
+  padding-left: 40px;
+  padding-right: 40px;
+}
 .page-title {
   height: 40px;
   display: flex;

@@ -29,9 +29,9 @@
               <div class="m-col">
                 <label>Mã nhân viên (<span>*</span>)</label>
                 <input
+                  :value="formMode == 'add' ? '' : employee.EmployeeCode"
                   id="txtEmployeeCode"
                   type="text"
-                  v-model="employee.EmployeeCode"
                 />
               </div>
               <div class="m-col">
@@ -39,18 +39,25 @@
                 <input
                   id="txtFullName"
                   type="text"
-                  v-model="employee.FullName"
+                  :value="formMode == 'add' ? '' : employee.FullName"
                 />
               </div>
             </div>
             <div class="m-row">
               <div class="m-col">
                 <label>Ngày sinh</label>
-                <input id="dtDateOfBirth" type="date" v-model="dateOfBirth" />
+                <input
+                  id="dtDateOfBirth"
+                  type="date"
+                  :value="formMode == 'add' ? '' : dateOfBirth"
+                />
               </div>
               <div class="m-col">
                 <label>Giới tính</label>
-                <select id="cbGender" v-model="employee.Gender">
+                <select
+                  id="cbGender"
+                  :value="formMode == 'add' ? '' : employee.Gender"
+                >
                   <option value="1">Nam</option>
                   <option value="0">Nữ</option>
                   <option value="2">Không xác định</option>
@@ -63,7 +70,7 @@
                 <input
                   id="txtIdentityNumber"
                   type="text"
-                  v-model="employee.IdentityNumber"
+                  :value="formMode == 'add' ? '' : employee.IdentityNumber"
                 />
               </div>
               <div class="m-col">
@@ -71,7 +78,7 @@
                 <input
                   id="txtIdentityDate"
                   type="date"
-                  v-model="IdentityDate"
+                  :value="formMode == 'add' ? '' : IdentityDate"
                 />
               </div>
             </div>
@@ -81,7 +88,7 @@
                 <input
                   id="txtIdentityPlace"
                   type="text"
-                  v-model="employee.IdentityPlace"
+                  :value="formMode == 'add' ? '' : employee.IdentityPlace"
                 />
               </div>
             </div>
@@ -89,14 +96,18 @@
             <div class="m-row">
               <div class="m-col">
                 <label>Email (<span>*</span>)</label>
-                <input id="txtEmail" type="text" v-model="employee.Email" />
+                <input
+                  id="txtEmail"
+                  type="text"
+                  :value="formMode == 'add' ? '' : employee.Email"
+                />
               </div>
               <div class="m-col">
                 <label>Số điện thoại (<span>*</span>)</label>
                 <input
                   id="txtPhoneNumber"
                   type="text"
-                  v-model="employee.PhoneNumber"
+                  :value="formMode == 'add' ? '' : employee.PhoneNumber"
                 />
               </div>
             </div>
@@ -107,7 +118,10 @@
             <div class="m-row">
               <div class="m-col">
                 <label>Vị trí</label>
-                <select id="cbPositionId" v-model="employee.PositionId">
+                <select
+                  id="cbPositionId"
+                  :value="formMode == 'add' ? '' : employee.PositionId"
+                >
                   <option value="3700cc49-55b5-69ea-4929-a2925c0f334d">
                     Giám đốc
                   </option>
@@ -121,7 +135,10 @@
               </div>
               <div class="m-col">
                 <label>Phòng ban</label>
-                <select id="cbDepartmentId" v-model="employee.DepartmentId">
+                <select
+                  id="cbDepartmentId"
+                  :value="formMode == 'add' ? '' : employee.DepartmentId"
+                >
                   <option value="17120d02-6ab5-3e43-18cb-66948daf6128">
                     Phòng đào tạo
                   </option>
@@ -143,7 +160,7 @@
                 <input
                   id="txtPersonalTaxCode"
                   type="text"
-                  v-model="employee.PersonalTaxCode"
+                  :value="formMode == 'add' ? '' : employee.PersonalTaxCode"
                 />
               </div>
               <div class="m-col">
@@ -153,7 +170,7 @@
                   id="txtSalary"
                   type="text"
                   style="text-align: right"
-                  v-model="employee.Salary"
+                  :value="formMode == 'add' ? '' : employee.Salary"
                 />
                 <span class="unit"> (VNĐ)</span>
               </div>
@@ -161,11 +178,18 @@
             <div class="m-row">
               <div class="m-col">
                 <label>Ngày gia nhập công ty</label>
-                <input id="dtJoinDate" type="date" v-model="JoinDate" />
+                <input
+                  id="dtJoinDate"
+                  type="date"
+                  :value="formMode == 'add' ? '' : JoinDate"
+                />
               </div>
               <div class="m-col">
                 <label>Tình trạng công việc</label>
-                <select id="cbWorkStatus" v-model="employee.WorkStatus">
+                <select
+                  id="cbWorkStatus"
+                  :value="formMode == 'add' ? '' : employee.WorkStatus"
+                >
                   <option value="0">Đang thử việc</option>
                   <option value="1">Đang làm việc</option>
                   <option value="2">Đã nghỉ việc</option>
@@ -218,19 +242,11 @@ export default {
         });
     },
   },
-  updated() {
-    if (this.formMode == "add") {
-      $(".body-right input, .body-right select").each(function () {
-        $(this).val(null);
-      });
-    }
-    if (this.isHide == false) {
-      $("#txtEmployeeCode").focus();
-    }
-  },
+
   methods: {
     btnCloseOnClick() {
       this.$emit("btnAddOnClick", true);
+      // this.formMode = null;
     },
 
     btnSaveOnClick() {
@@ -276,9 +292,12 @@ export default {
           .then(function (response) {
             console.log(response);
             seft.$emit("btnAddOnClick", true);
+            seft.$emit("btnRefreshOnClick");
           })
           .catch(function (error) {
             console.log(error);
+            seft.$emit("btnAddOnClick", true);
+            seft.$emit("btnRefreshOnClick");
           });
       } else if (this.formMode == "update") {
         let seft = this;
@@ -290,12 +309,15 @@ export default {
           .then(function (response) {
             console.log(response);
             seft.$emit("btnAddOnClick", true);
+            seft.$emit("btnRefreshOnClick");
           })
           .catch(function (error) {
             console.log(error);
             seft.$emit("btnAddOnClick", true);
+            seft.$emit("btnRefreshOnClick");
           });
       }
+      // this.formMode = null;
     },
   },
   data() {

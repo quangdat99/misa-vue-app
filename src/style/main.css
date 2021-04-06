@@ -5,7 +5,7 @@
 @import "./base/input.css";
 @import "./base/table.css";
 @import "./layout/content.css";
-/* @import "./base/select.css"; */
+@import "./base/modal.css";
 
 body {
   margin: 0;
