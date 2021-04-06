@@ -73,7 +73,7 @@
         </thead>
         <tbody>
           <tr
-            v-for="employee in employees"
+            v-for="employee in itemEmployees[currentPage - 1]"
             :key="employee.EmployeeId"
             @dblclick="rowOnDblClick(employee.EmployeeId, employee)"
             class="trEmployee"
@@ -87,7 +87,7 @@
             <td>{{ employee.PositionName }}</td>
             <td>{{ employee.DepartmentName }}</td>
             <td class="text-align-right">{{ employee.Salary }}</td>
-            <td class="text-align-center">{{ employee.WorkStatusName }}</td>
+            <td class="text-align-center">{{ employee.MartialStatusName }}</td>
           </tr>
         </tbody>
       </table>
@@ -130,10 +130,18 @@
           </svg>
         </div>
         <div class="btn-page">
-          <div class="btn-page-index active">1</div>
-          <div class="btn-page-index">2</div>
+          <div
+            class="btn-page-index"
+            v-for="(itemEmployee, index) in itemEmployees"
+            :key="index"
+            @click="setCurrentPage(index)"
+            :class="{ active: currentPage == index + 1 }"
+          >
+            {{ index + 1 }}
+          </div>
+          <!-- <div class="btn-page-index">2</div>
           <div class="btn-page-index">3</div>
-          <div class="btn-page-index">4</div>
+          <div class="btn-page-index">4</div> -->
         </div>
         <div class="btn-next-page">
           <svg
@@ -203,19 +211,30 @@
 <script>
 import axios from "axios";
 import EmployeeDetail from "./EmployeeDetail.vue";
-// import Modal from "../../components/modals/Modal.vue";
 import moment from "moment";
 import $ from "jquery";
 
 export default {
   components: {
     EmployeeDetail,
-    // Modal,
   },
   created() {
     axios.get("http://api.manhnv.net/v1/employees").then((response) => {
       console.log(response);
       this.employees = response.data;
+
+      var perPage = 3;
+      this.perPage = perPage;
+
+      var n = Math.ceil(this.employees.length / perPage);
+      this.totalPage = n;
+      var items = [n];
+      for (var i = 0; i < n; ++i) {
+        var begin = i * perPage;
+        var end = (i + 1) * perPage;
+        items[i] = this.employees.slice(begin, end);
+        this.itemEmployees.push(items[i]);
+      }
     });
   },
 
@@ -242,6 +261,21 @@ export default {
       axios.get("http://api.manhnv.net/v1/employees").then((response) => {
         console.log(response);
         this.employees = response.data;
+        this.itemEmployees = [];
+
+        var perPage = 3;
+        this.perPage = perPage;
+
+        var n = Math.ceil(this.employees.length / perPage);
+        this.totalPage = n;
+        var items = [n];
+
+        for (var i = 0; i < n; ++i) {
+          var begin = i * perPage;
+          var end = (i + 1) * perPage;
+          items[i] = this.employees.slice(begin, end);
+          this.itemEmployees.push(items[i]);
+        }
       });
     },
     btnAddOnClick(isShowDialog) {
@@ -281,6 +315,9 @@ export default {
         this.detailFormMode = "update";
       }
     },
+    setCurrentPage(index) {
+      this.currentPage = index + 1;
+    },
   },
   data() {
     return {
@@ -291,9 +328,15 @@ export default {
       employees: [],
       moment: moment,
       deleteTrue: false,
+      itemEmployees: [],
+      totalPage: null,
+      currentPage: 1,
+      perPage: null,
     };
   },
   mounted() {
+    // Panagition
+
     // Modal js
     var modal = document.getElementById("myModal");
     var span = document.getElementsByClassName("close")[0];
