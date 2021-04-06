@@ -6,6 +6,7 @@
 @import "./base/table.css";
 @import "./layout/content.css";
 @import "./base/modal.css";
+@import "./base/toast.css";
 
 body {
   margin: 0;
