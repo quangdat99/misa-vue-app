@@ -11,24 +11,53 @@
     </div>
     <div class="toolbar">
       <input
+        @keyup="filterEmployees()"
+        id="txtSearch"
         type="text"
         class="input-search"
         style="width: 360px"
         placeholder="Tìm kiếm theo Mã, Tên hoặc Số điện thoại"
       />
-      <div class="custom-select" style="width: 230px; margin-left: 20px">
-        <select name="" id="">
+      <!-- <div
+        class="custom-select"
+        style="width: 230px; margin-left: 20px"
+        @change="filterEmployees()"
+      >
+        <select name="" id="cbDepartment" @change="filterEmployees()" >
           <option value="0">Tất cả phòng ban</option>
+          <option value="1">Tất cả phòng ban</option>
           <option value="3700cc49-55b5-69ea-4929-a2925c0f334d">Giám đốc</option>
           <option value="148ed882-32b8-218e-9c20-39c2f00615e8">
             Nhân viên Marketting
           </option>
           <option value="25c6c36e-1668-7d10-6e09-bf1378b8dc91">Thu ngân</option>
         </select>
-      </div>
-      <div class="custom-select" style="width: 180px; margin-left: 20px">
-        <select name="" id="">
+      </div> -->
+
+      <select
+        name=""
+        id="cbDepartment"
+        style="width: 230px; margin-left: 20px"
+        @change="filterEmployees()"
+      >
+        <option value="0">Tất cả phòng ban</option>
+        <option value="17120d02-6ab5-3e43-18cb-66948daf6128">
+          Phòng đào tạo
+        </option>
+        <option value="4e272fc4-7875-78d6-7d32-6a1673ffca7c">
+          Phòng Công nghệ
+        </option>
+        <option value="469b3ece-744a-45d5-957d-e8c757976496">
+          Phòng nhân sự
+        </option>
+        <option value="142cb08f-7c31-21fa-8e90-67245e8b283e">
+          Phòng Marketting
+        </option>
+      </select>
+      <!-- <div class="custom-select" style="width: 180px; margin-left: 20px">
+        <select name="" id="cbPossition" @change="filterEmployees()">
           <option value="0">Tất cả vị trí</option>
+          <option value="1">Tất cả vị trí</option>
           <option value="17120d02-6ab5-3e43-18cb-66948daf6128">
             Phòng đào tạo
           </option>
@@ -42,8 +71,20 @@
             Phòng Marketting
           </option>
         </select>
-      </div>
-
+      </div> -->
+      <select
+        name=""
+        id="cbPossition"
+        style="width: 190px; margin-left: 20px"
+        @change="filterEmployees()"
+      >
+        <option value="0">Tất cả vị trí</option>
+        <option value="3700cc49-55b5-69ea-4929-a2925c0f334d">Giám đốc</option>
+        <option value="148ed882-32b8-218e-9c20-39c2f00615e8">
+          Nhân viên Marketting
+        </option>
+        <option value="25c6c36e-1668-7d10-6e09-bf1378b8dc91">Thu ngân</option>
+      </select>
       <button
         id="btnRefresh"
         class="btn-refresh"
@@ -96,7 +137,7 @@
     <div class="paging">
       <div class="paging-left">Hiển thị 1-10/1000 khách hàng</div>
       <div class="paging-center">
-        <div class="btn-firstpage">
+        <div class="btn-firstpage" @click="setCurrentPageFirst()">
           <svg
             xmlns="http://www.w3.org/2000/svg"
             width="24"
@@ -113,7 +154,7 @@
             <polyline points="18 17 13 12 18 7"></polyline>
           </svg>
         </div>
-        <div class="btn-prev-page">
+        <div class="btn-prev-page" @click="setCurrentPagePrev()">
           <svg
             xmlns="http://www.w3.org/2000/svg"
             width="24"
@@ -143,7 +184,7 @@
           <div class="btn-page-index">3</div>
           <div class="btn-page-index">4</div> -->
         </div>
-        <div class="btn-next-page">
+        <div class="btn-next-page" @click="setCurrentPageNext()">
           <svg
             xmlns="http://www.w3.org/2000/svg"
             width="24"
@@ -159,7 +200,7 @@
             <polyline points="9 18 15 12 9 6"></polyline>
           </svg>
         </div>
-        <div class="btn-lastpage">
+        <div class="btn-lastpage" @click="setCurrentPageLast()">
           <svg
             xmlns="http://www.w3.org/2000/svg"
             width="24"
@@ -277,6 +318,9 @@ export default {
           this.itemEmployees.push(items[i]);
         }
       });
+      this.deleteTrue = false;
+      $(".trEmployee").unbind("mouseenter mouseleave");
+      $(".trEmployee").css("background-color", "");
     },
     btnAddOnClick(isShowDialog) {
       this.detailFormMode = "add";
@@ -318,6 +362,95 @@ export default {
     setCurrentPage(index) {
       this.currentPage = index + 1;
     },
+    setCurrentPagePrev() {
+      if (this.currentPage > 1) this.currentPage = this.currentPage - 1;
+    },
+    setCurrentPageNext() {
+      if (this.currentPage < this.totalPage)
+        this.currentPage = this.currentPage + 1;
+    },
+    setCurrentPageFirst() {
+      this.currentPage = 1;
+    },
+    setCurrentPageLast() {
+      this.currentPage = this.totalPage;
+    },
+    filterEmployees() {
+      this.currentPage = 1;
+      console.log($("#txtSearch").val());
+      console.log($("#cbDepartment").val());
+      console.log($("#cbPossition").val());
+      // filter input name, phone, employeeCode
+      var queryInputSearch = $("#txtSearch").val();
+      var querycbDepartment = $("#cbDepartment").val();
+      var querycbPossition = $("#cbPossition").val();
+
+      var employees = this.employees.filter(function (employee) {
+        return (
+          (employee.FullName.toLowerCase()
+            .normalize("NFD")
+            .replace(/[\u0300-\u036f]/g, "")
+            .replace(/đ/g, "d")
+            .replace(/Đ/g, "D")
+            .indexOf(
+              queryInputSearch
+                .toLowerCase()
+                .normalize("NFD")
+                .replace(/[\u0300-\u036f]/g, "")
+                .replace(/đ/g, "d")
+                .replace(/Đ/g, "D")
+            ) !== -1 ||
+            employee.EmployeeCode.toLowerCase()
+              .normalize("NFD")
+              .replace(/[\u0300-\u036f]/g, "")
+              .replace(/đ/g, "d")
+              .replace(/Đ/g, "D")
+              .indexOf(
+                queryInputSearch
+                  .toLowerCase()
+                  .normalize("NFD")
+                  .replace(/[\u0300-\u036f]/g, "")
+                  .replace(/đ/g, "d")
+                  .replace(/Đ/g, "D")
+              ) !== -1 ||
+            employee.PhoneNumber.toLowerCase()
+              .normalize("NFD")
+              .replace(/[\u0300-\u036f]/g, "")
+              .replace(/đ/g, "d")
+              .replace(/Đ/g, "D")
+              .indexOf(
+                queryInputSearch
+                  .toLowerCase()
+                  .normalize("NFD")
+                  .replace(/[\u0300-\u036f]/g, "")
+                  .replace(/đ/g, "d")
+                  .replace(/Đ/g, "D")
+              ) !== -1) &&
+          (querycbDepartment !== "0"
+            ? employee.DepartmentId == querycbDepartment
+            : true) &&
+          (querycbPossition !== "0"
+            ? employee.PositionId == querycbPossition
+            : true)
+        );
+      });
+      console.log(employees);
+
+      // phân trang
+      this.itemEmployees = [];
+      var perPage = 3;
+      this.perPage = perPage;
+      var n = Math.ceil(employees.length / perPage);
+      this.totalPage = n;
+      var items = [n];
+
+      for (var i = 0; i < n; ++i) {
+        var begin = i * perPage;
+        var end = (i + 1) * perPage;
+        items[i] = employees.slice(begin, end);
+        this.itemEmployees.push(items[i]);
+      }
+    },
   },
   data() {
     return {
@@ -329,12 +462,15 @@ export default {
       moment: moment,
       deleteTrue: false,
       itemEmployees: [],
-      totalPage: null,
-      currentPage: 1,
-      perPage: null,
+      totalPage: null, //tổng số trang
+      currentPage: 1, // trang hiện tại
+      perPage: null, //số record / 1 trang
     };
   },
+  computed: {},
   mounted() {
+    // Filter
+
     // Panagition
 
     // Modal js
@@ -354,76 +490,76 @@ export default {
     };
 
     // Select js
-    var x, i, j, l, ll, selElmnt, a, b, c;
-    x = document.getElementsByClassName("custom-select");
-    l = x.length;
-    for (i = 0; i < l; i++) {
-      selElmnt = x[i].getElementsByTagName("select")[0];
-      ll = selElmnt.length;
-      a = document.createElement("DIV");
-      a.setAttribute("class", "select-selected");
-      a.innerHTML = selElmnt.options[selElmnt.selectedIndex].innerHTML;
-      x[i].appendChild(a);
-      b = document.createElement("DIV");
-      b.setAttribute("class", "select-items select-hide");
-      for (j = 1; j < ll; j++) {
-        c = document.createElement("DIV");
-        c.innerHTML = selElmnt.options[j].innerHTML;
-        c.addEventListener("click", function () {
-          var y, i, k, s, h, sl, yl;
-          s = this.parentNode.parentNode.getElementsByTagName("select")[0];
-          sl = s.length;
-          h = this.parentNode.previousSibling;
-          for (i = 0; i < sl; i++) {
-            if (s.options[i].innerHTML == this.innerHTML) {
-              s.selectedIndex = i;
-              h.innerHTML = this.innerHTML;
-              y = this.parentNode.getElementsByClassName("same-as-selected");
-              yl = y.length;
-              for (k = 0; k < yl; k++) {
-                y[k].removeAttribute("class");
-              }
-              this.setAttribute("class", "same-as-selected");
-              break;
-            }
-          }
-          h.click();
-        });
-        b.appendChild(c);
-      }
-      x[i].appendChild(b);
-      a.addEventListener("click", function (e) {
-        e.stopPropagation();
-        closeAllSelect(this);
-        this.nextSibling.classList.toggle("select-hide");
-        this.classList.toggle("select-arrow-active");
-      });
-    }
-    function closeAllSelect(elmnt) {
-      var x,
-        y,
-        i,
-        xl,
-        yl,
-        arrNo = [];
-      x = document.getElementsByClassName("select-items");
-      y = document.getElementsByClassName("select-selected");
-      xl = x.length;
-      yl = y.length;
-      for (i = 0; i < yl; i++) {
-        if (elmnt == y[i]) {
-          arrNo.push(i);
-        } else {
-          y[i].classList.remove("select-arrow-active");
-        }
-      }
-      for (i = 0; i < xl; i++) {
-        if (arrNo.indexOf(i)) {
-          x[i].classList.add("select-hide");
-        }
-      }
-    }
-    document.addEventListener("click", closeAllSelect);
+    // var x, i, j, l, ll, selElmnt, a, b, c;
+    // x = document.getElementsByClassName("custom-select");
+    // l = x.length;
+    // for (i = 0; i < l; i++) {
+    //   selElmnt = x[i].getElementsByTagName("select")[0];
+    //   ll = selElmnt.length;
+    //   a = document.createElement("DIV");
+    //   a.setAttribute("class", "select-selected");
+    //   a.innerHTML = selElmnt.options[selElmnt.selectedIndex].innerHTML;
+    //   x[i].appendChild(a);
+    //   b = document.createElement("DIV");
+    //   b.setAttribute("class", "select-items select-hide");
+    //   for (j = 1; j < ll; j++) {
+    //     c = document.createElement("DIV");
+    //     c.innerHTML = selElmnt.options[j].innerHTML;
+    //     c.addEventListener("click", function () {
+    //       var y, i, k, s, h, sl, yl;
+    //       s = this.parentNode.parentNode.getElementsByTagName("select")[0];
+    //       sl = s.length;
+    //       h = this.parentNode.previousSibling;
+    //       for (i = 0; i < sl; i++) {
+    //         if (s.options[i].innerHTML == this.innerHTML) {
+    //           s.selectedIndex = i;
+    //           h.innerHTML = this.innerHTML;
+    //           y = this.parentNode.getElementsByClassName("same-as-selected");
+    //           yl = y.length;
+    //           for (k = 0; k < yl; k++) {
+    //             y[k].removeAttribute("class");
+    //           }
+    //           this.setAttribute("class", "same-as-selected");
+    //           break;
+    //         }
+    //       }
+    //       h.click();
+    //     });
+    //     b.appendChild(c);
+    //   }
+    //   x[i].appendChild(b);
+    //   a.addEventListener("click", function (e) {
+    //     e.stopPropagation();
+    //     closeAllSelect(this);
+    //     this.nextSibling.classList.toggle("select-hide");
+    //     this.classList.toggle("select-arrow-active");
+    //   });
+    // }
+    // function closeAllSelect(elmnt) {
+    //   var x,
+    //     y,
+    //     i,
+    //     xl,
+    //     yl,
+    //     arrNo = [];
+    //   x = document.getElementsByClassName("select-items");
+    //   y = document.getElementsByClassName("select-selected");
+    //   xl = x.length;
+    //   yl = y.length;
+    //   for (i = 0; i < yl; i++) {
+    //     if (elmnt == y[i]) {
+    //       arrNo.push(i);
+    //     } else {
+    //       y[i].classList.remove("select-arrow-active");
+    //     }
+    //   }
+    //   for (i = 0; i < xl; i++) {
+    //     if (arrNo.indexOf(i)) {
+    //       x[i].classList.add("select-hide");
+    //     }
+    //   }
+    // }
+    // document.addEventListener("click", closeAllSelect);
   },
 };
 </script>
@@ -446,6 +582,7 @@ export default {
   padding-left: 40px;
   padding-right: 40px;
 }
+
 #btnDeleteEmployee {
   position: absolute;
   right: 24px;
@@ -454,6 +591,9 @@ export default {
   color: #fff;
   padding-left: 40px;
   padding-right: 40px;
+}
+#btnDeleteEmployee:hover {
+  background-color: #f76e6e;
 }
 .page-title {
   height: 40px;
