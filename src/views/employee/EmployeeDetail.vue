@@ -29,10 +29,13 @@
               <div class="m-col">
                 <label>Mã nhân viên (<span>*</span>)</label>
                 <input
-                  :value="formMode == 'add' ? '' : employee.EmployeeCode"
+                  :value="
+                    formMode == 'add' ? newEmployeeCode : employee.EmployeeCode
+                  "
                   id="txtEmployeeCode"
                   type="text"
                 />
+                <span>{{ validateEmployeeCode }}</span>
               </div>
               <div class="m-col">
                 <label>Họ và tên (<span>*</span>)</label>
@@ -41,6 +44,7 @@
                   type="text"
                   :value="formMode == 'add' ? '' : employee.FullName"
                 />
+                <span>{{ validateFullName }}</span>
               </div>
             </div>
             <div class="m-row">
@@ -72,6 +76,7 @@
                   type="text"
                   :value="formMode == 'add' ? '' : employee.IdentityNumber"
                 />
+                <span>{{ validateIdentityNumber }}</span>
               </div>
               <div class="m-col">
                 <label>Ngày cấp</label>
@@ -101,6 +106,7 @@
                   type="text"
                   :value="formMode == 'add' ? '' : employee.Email"
                 />
+                <span>{{ validateEmail }}</span>
               </div>
               <div class="m-col">
                 <label>Số điện thoại (<span>*</span>)</label>
@@ -109,6 +115,7 @@
                   type="text"
                   :value="formMode == 'add' ? '' : employee.PhoneNumber"
                 />
+                <span>{{ validatePhoneNumber }}</span>
               </div>
             </div>
             <div class="body-title">
@@ -203,7 +210,9 @@
             <div class="icon-save"></div>
             Lưu
           </button>
-          <button id="btnCancel" class="btn-default">Hủy</button>
+          <button id="btnCancel" class="btn-default" @click="btnCloseOnClick()">
+            Hủy
+          </button>
         </div>
       </div>
     </div>
@@ -219,9 +228,10 @@ export default {
     isHide: { type: Boolean, default: true },
     employeeId: { type: String, default: null },
     formMode: { type: String, default: null },
+    newEmployeeCode: { type: String, default: null },
   },
   created() {},
-
+  mounted() {},
   watch: {
     employeeId: function () {
       // Lấy dữ liệu từ Api:
@@ -246,7 +256,11 @@ export default {
   methods: {
     btnCloseOnClick() {
       this.$emit("btnAddOnClick", true);
-      // this.formMode = null;
+      this.validateEmployeeCode = null;
+      this.validateFullName = null;
+      this.validateIdentityNumber = null;
+      this.validateEmail = null;
+      this.validatePhoneNumber = null;
     },
 
     btnSaveOnClick() {
@@ -284,48 +298,113 @@ export default {
         WorkStatus: WorkStatus,
       };
 
-      if (this.formMode == "add") {
-        let seft = this;
-
-        axios
-          .post("http://api.manhnv.net/v1/employees/", newEmployee)
-          .then(function (response) {
-            console.log(response);
-            seft.$emit("btnAddOnClick", true);
-            seft.$emit("btnRefreshOnClick");
-          })
-          .catch(function (error) {
-            console.log(error);
-            seft.$emit("btnAddOnClick", true);
-            seft.$emit("btnRefreshOnClick");
-          });
-      } else if (this.formMode == "update") {
-        let seft = this;
-        axios
-          .put(
-            "http://api.manhnv.net/v1/employees/" + this.employeeId,
-            newEmployee
-          )
-          .then(function (response) {
-            console.log(response);
-            seft.$emit("btnAddOnClick", true);
-            seft.$emit("btnRefreshOnClick");
-          })
-          .catch(function (error) {
-            console.log(error);
-            seft.$emit("btnAddOnClick", true);
-            seft.$emit("btnRefreshOnClick");
-          });
+      if (!EmployeeCode) {
+        this.validateEmployeeCode = "Yêu cầu nhập Mã nhân viên.";
+      } else {
+        this.validateEmployeeCode = null;
       }
-      // this.formMode = null;
+      if (!FullName) {
+        this.validateFullName = "Yêu cầu nhập Họ và tên.";
+      } else {
+        this.validateFullName = null;
+      }
+      if (!IdentityNumber) {
+        this.validateIdentityNumber = "Yêu cầu nhập Số CMTND/ Căn cước.";
+      } else {
+        this.validateIdentityNumber = null;
+      }
+      if (!Email) {
+        this.validateEmail = "Yêu cầu nhập địa chỉ Email.";
+      } else {
+        this.validateEmail = null;
+      }
+      if (!PhoneNumber) {
+        this.validatePhoneNumber = "Yêu cầu nhập Số điện thoại.";
+      } else {
+        this.validatePhoneNumber = null;
+      }
+
+      if (isNaN(PhoneNumber)) {
+        this.validatePhoneNumber = "Số điện thoại chỉ gồm các chữ số.";
+      }
+
+      if (
+        EmployeeCode &&
+        FullName &&
+        IdentityNumber &&
+        Email &&
+        PhoneNumber &&
+        !isNaN(PhoneNumber)
+      ) {
+        if (this.formMode == "add") {
+          let seft = this;
+
+          axios
+            .post("http://api.manhnv.net/v1/employees/", newEmployee)
+            .then(function (response) {
+              console.log(response);
+              seft.$emit("btnAddOnClick", true);
+              seft.$emit("btnRefreshOnClick");
+            })
+            .catch(function (error) {
+              console.log(error);
+
+              seft.$emit("btnAddOnClick", true);
+              seft.$emit("btnRefreshOnClick");
+              alert(error);
+            });
+        } else if (this.formMode == "update") {
+          let seft = this;
+          axios
+            .put(
+              "http://api.manhnv.net/v1/employees/" + this.employeeId,
+              newEmployee
+            )
+            .then(function (response) {
+              console.log(response);
+              seft.$emit("btnAddOnClick", true);
+              seft.$emit("btnRefreshOnClick");
+            })
+            .catch(function (error) {
+              console.log(error);
+              seft.$emit("btnAddOnClick", true);
+              seft.$emit("btnRefreshOnClick");
+              alert(error);
+            });
+        }
+      } else {
+        // $("#txtEmployeeCode").val(EmployeeCode);
+        // $("#txtFullName").val(FullName);
+        // $("#dtDateOfBirth").val(DateOfBirth);
+        // $("#cbGender").val(Gender);
+        // $("#txtIdentityNumber").val(IdentityNumber);
+        // $("#txtIdentityDate").val(IdentityDate);
+        // $("#txtIdentityPlace").val(IdentityPlace);
+        // $("#txtEmail").val(Email);
+        // $("#txtPhoneNumber").val(PhoneNumber);
+        // console.log($("#txtPhoneNumber").val());
+        // $("#cbPositionId").val(PositionId);
+        // $("#cbDepartmentId").val(DepartmentId);
+        // $("#txtPersonalTaxCode").val(PersonalTaxCode);
+        // $("#txtSalary").val(Salary);
+        // $("#dtJoinDate").val(JoinDate);
+        // $("#cbWorkStatus").val(WorkStatus);
+      }
     },
   },
+
   data() {
     return {
       employee: {},
       dateOfBirth: "",
       IdentityDate: "",
       JoinDate: "",
+      validate: {},
+      validateFullName: null,
+      validateEmployeeCode: null,
+      validatePhoneNumber: null,
+      validateEmail: null,
+      validateIdentityNumber: null,
     };
   },
 };

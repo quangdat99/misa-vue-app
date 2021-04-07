@@ -244,6 +244,7 @@
       :isHide="isHideDialogDetail"
       :employeeId="employeeId"
       :formMode="detailFormMode"
+      :newEmployeeCode="newEmployeeCode"
       @btnAddOnClick="btnAddOnClick"
       @btnRefreshOnClick="btnRefreshOnClick"
     />
@@ -264,15 +265,12 @@ export default {
       console.log(response);
       this.employees = response.data;
 
-      var perPage = 3;
-      this.perPage = perPage;
-
-      var n = Math.ceil(this.employees.length / perPage);
+      var n = Math.ceil(this.employees.length / this.perPage);
       this.totalPage = n;
       var items = [n];
       for (var i = 0; i < n; ++i) {
-        var begin = i * perPage;
-        var end = (i + 1) * perPage;
+        var begin = i * this.perPage;
+        var end = (i + 1) * this.perPage;
         items[i] = this.employees.slice(begin, end);
         this.itemEmployees.push(items[i]);
       }
@@ -299,21 +297,23 @@ export default {
       }
     },
     btnRefreshOnClick() {
+      $("#txtSearch, #cbDepartment, #cbPossition").val(null);
+      $("#cbDepartment").val("0");
+      $("#cbPossition").val("0");
+
       axios.get("http://api.manhnv.net/v1/employees").then((response) => {
         console.log(response);
         this.employees = response.data;
         this.itemEmployees = [];
+        this.currentPage = 1;
 
-        var perPage = 3;
-        this.perPage = perPage;
-
-        var n = Math.ceil(this.employees.length / perPage);
+        var n = Math.ceil(this.employees.length / this.perPage);
         this.totalPage = n;
         var items = [n];
 
         for (var i = 0; i < n; ++i) {
-          var begin = i * perPage;
-          var end = (i + 1) * perPage;
+          var begin = i * this.perPage;
+          var end = (i + 1) * this.perPage;
           items[i] = this.employees.slice(begin, end);
           this.itemEmployees.push(items[i]);
         }
@@ -328,6 +328,13 @@ export default {
       if (isShowDialog == true) {
         this.isHideDialogDetail = true;
       } else {
+        axios
+          .get("http://api.manhnv.net/v1/employees/newemployeecode")
+          .then((response) => {
+            console.log(response.data);
+            this.newEmployeeCode = response.data.toString();
+            this.isHideDialogDetail = false;
+          });
         this.isHideDialogDetail = false;
       }
     },
@@ -351,6 +358,7 @@ export default {
             .catch(function (error) {
               console.log(error);
               $(".modal").css("display", "none");
+              alert(error);
             });
         });
       } else {
@@ -387,45 +395,49 @@ export default {
 
       var employees = this.employees.filter(function (employee) {
         return (
-          (employee.FullName.toLowerCase()
-            .normalize("NFD")
-            .replace(/[\u0300-\u036f]/g, "")
-            .replace(/đ/g, "d")
-            .replace(/Đ/g, "D")
-            .indexOf(
-              queryInputSearch
-                .toLowerCase()
+          (employee.FullName != null
+            ? employee.FullName.toLowerCase()
                 .normalize("NFD")
                 .replace(/[\u0300-\u036f]/g, "")
                 .replace(/đ/g, "d")
                 .replace(/Đ/g, "D")
-            ) !== -1 ||
-            employee.EmployeeCode.toLowerCase()
-              .normalize("NFD")
-              .replace(/[\u0300-\u036f]/g, "")
-              .replace(/đ/g, "d")
-              .replace(/Đ/g, "D")
-              .indexOf(
-                queryInputSearch
-                  .toLowerCase()
-                  .normalize("NFD")
-                  .replace(/[\u0300-\u036f]/g, "")
-                  .replace(/đ/g, "d")
-                  .replace(/Đ/g, "D")
-              ) !== -1 ||
-            employee.PhoneNumber.toLowerCase()
-              .normalize("NFD")
-              .replace(/[\u0300-\u036f]/g, "")
-              .replace(/đ/g, "d")
-              .replace(/Đ/g, "D")
-              .indexOf(
-                queryInputSearch
-                  .toLowerCase()
-                  .normalize("NFD")
-                  .replace(/[\u0300-\u036f]/g, "")
-                  .replace(/đ/g, "d")
-                  .replace(/Đ/g, "D")
-              ) !== -1) &&
+                .indexOf(
+                  queryInputSearch
+                    .toLowerCase()
+                    .normalize("NFD")
+                    .replace(/[\u0300-\u036f]/g, "")
+                    .replace(/đ/g, "d")
+                    .replace(/Đ/g, "D")
+                ) !== -1
+            : false || employee.EmployeeCode != null
+            ? employee.EmployeeCode.toLowerCase()
+                .normalize("NFD")
+                .replace(/[\u0300-\u036f]/g, "")
+                .replace(/đ/g, "d")
+                .replace(/Đ/g, "D")
+                .indexOf(
+                  queryInputSearch
+                    .toLowerCase()
+                    .normalize("NFD")
+                    .replace(/[\u0300-\u036f]/g, "")
+                    .replace(/đ/g, "d")
+                    .replace(/Đ/g, "D")
+                ) !== -1
+            : false || employee.PhoneNumber != null
+            ? employee.PhoneNumber.toLowerCase()
+                .normalize("NFD")
+                .replace(/[\u0300-\u036f]/g, "")
+                .replace(/đ/g, "d")
+                .replace(/Đ/g, "D")
+                .indexOf(
+                  queryInputSearch
+                    .toLowerCase()
+                    .normalize("NFD")
+                    .replace(/[\u0300-\u036f]/g, "")
+                    .replace(/đ/g, "d")
+                    .replace(/Đ/g, "D")
+                ) !== -1
+            : false) &&
           (querycbDepartment !== "0"
             ? employee.DepartmentId == querycbDepartment
             : true) &&
@@ -438,15 +450,14 @@ export default {
 
       // phân trang
       this.itemEmployees = [];
-      var perPage = 3;
-      this.perPage = perPage;
-      var n = Math.ceil(employees.length / perPage);
+
+      var n = Math.ceil(employees.length / this.perPage);
       this.totalPage = n;
       var items = [n];
 
       for (var i = 0; i < n; ++i) {
-        var begin = i * perPage;
-        var end = (i + 1) * perPage;
+        var begin = i * this.perPage;
+        var end = (i + 1) * this.perPage;
         items[i] = employees.slice(begin, end);
         this.itemEmployees.push(items[i]);
       }
@@ -457,6 +468,7 @@ export default {
       isHideDialogDetail: true,
       employeeId: null,
       detailFormMode: null,
+      newEmployeeCode: null,
       employee: {},
       employees: [],
       moment: moment,
@@ -464,7 +476,7 @@ export default {
       itemEmployees: [],
       totalPage: null, //tổng số trang
       currentPage: 1, // trang hiện tại
-      perPage: null, //số record / 1 trang
+      perPage: 5, //số record / 1 trang
     };
   },
   computed: {},
