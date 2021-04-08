@@ -29,6 +29,7 @@
               <div class="m-col">
                 <label>Mã nhân viên (<span>*</span>)</label>
                 <input
+                  autofocus
                   :value="
                     formMode == 'add' ? newEmployeeCode : employee.EmployeeCode
                   "
@@ -230,8 +231,7 @@ export default {
     formMode: { type: String, default: null },
     newEmployeeCode: { type: String, default: null },
   },
-  created() {},
-  mounted() {},
+
   watch: {
     employeeId: function () {
       // Lấy dữ liệu từ Api:
@@ -316,7 +316,13 @@ export default {
       if (!Email) {
         this.validateEmail = "Yêu cầu nhập địa chỉ Email.";
       } else {
-        this.validateEmail = null;
+        var re = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+        if (!re.test(Email)) {
+          this.validateEmail = "Email không đúng định dạng.";
+        } else {
+          this.validateEmail = null;
+        }
+        // this.validateEmail = null;
       }
       if (!PhoneNumber) {
         this.validatePhoneNumber = "Yêu cầu nhập Số điện thoại.";
@@ -326,7 +332,16 @@ export default {
 
       if (isNaN(PhoneNumber)) {
         this.validatePhoneNumber = "Số điện thoại chỉ gồm các chữ số.";
+      } else {
+        this.validatePhoneNumber = null;
       }
+
+      // var checkEmployeeCode = false;
+      // this.employees.array.forEach(element => {
+
+      // });
+
+      // console.log(re.test(Email));
 
       if (
         EmployeeCode &&
@@ -454,7 +469,7 @@ select {
   background-image: url("../../assets/icon/add.png");
 }
 .dialog .dialog-content {
-  height: 685px;
+  height: 720px;
   width: 740px;
   top: 46%;
   left: 42%;

@@ -11,6 +11,7 @@
     </div>
     <div class="toolbar">
       <input
+        autofocus
         @keyup="filterEmployees()"
         id="txtSearch"
         type="text"
@@ -395,7 +396,7 @@ export default {
 
       var employees = this.employees.filter(function (employee) {
         return (
-          (employee.FullName != null
+          ((employee.FullName != null
             ? employee.FullName.toLowerCase()
                 .normalize("NFD")
                 .replace(/[\u0300-\u036f]/g, "")
@@ -409,35 +410,37 @@ export default {
                     .replace(/đ/g, "d")
                     .replace(/Đ/g, "D")
                 ) !== -1
-            : false || employee.EmployeeCode != null
-            ? employee.EmployeeCode.toLowerCase()
-                .normalize("NFD")
-                .replace(/[\u0300-\u036f]/g, "")
-                .replace(/đ/g, "d")
-                .replace(/Đ/g, "D")
-                .indexOf(
-                  queryInputSearch
-                    .toLowerCase()
-                    .normalize("NFD")
-                    .replace(/[\u0300-\u036f]/g, "")
-                    .replace(/đ/g, "d")
-                    .replace(/Đ/g, "D")
-                ) !== -1
-            : false || employee.PhoneNumber != null
-            ? employee.PhoneNumber.toLowerCase()
-                .normalize("NFD")
-                .replace(/[\u0300-\u036f]/g, "")
-                .replace(/đ/g, "d")
-                .replace(/Đ/g, "D")
-                .indexOf(
-                  queryInputSearch
-                    .toLowerCase()
-                    .normalize("NFD")
-                    .replace(/[\u0300-\u036f]/g, "")
-                    .replace(/đ/g, "d")
-                    .replace(/Đ/g, "D")
-                ) !== -1
-            : false) &&
+            : false) ||
+            (employee.EmployeeCode != null
+              ? employee.EmployeeCode.toLowerCase()
+                  .normalize("NFD")
+                  .replace(/[\u0300-\u036f]/g, "")
+                  .replace(/đ/g, "d")
+                  .replace(/Đ/g, "D")
+                  .indexOf(
+                    queryInputSearch
+                      .toLowerCase()
+                      .normalize("NFD")
+                      .replace(/[\u0300-\u036f]/g, "")
+                      .replace(/đ/g, "d")
+                      .replace(/Đ/g, "D")
+                  ) !== -1
+              : false) ||
+            (employee.PhoneNumber != null
+              ? employee.PhoneNumber.toLowerCase()
+                  .normalize("NFD")
+                  .replace(/[\u0300-\u036f]/g, "")
+                  .replace(/đ/g, "d")
+                  .replace(/Đ/g, "D")
+                  .indexOf(
+                    queryInputSearch
+                      .toLowerCase()
+                      .normalize("NFD")
+                      .replace(/[\u0300-\u036f]/g, "")
+                      .replace(/đ/g, "d")
+                      .replace(/Đ/g, "D")
+                  ) !== -1
+              : false)) &&
           (querycbDepartment !== "0"
             ? employee.DepartmentId == querycbDepartment
             : true) &&
@@ -476,7 +479,7 @@ export default {
       itemEmployees: [],
       totalPage: null, //tổng số trang
       currentPage: 1, // trang hiện tại
-      perPage: 5, //số record / 1 trang
+      perPage: 50, //số record / 1 trang
     };
   },
   computed: {},
