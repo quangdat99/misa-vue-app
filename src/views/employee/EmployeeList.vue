@@ -128,7 +128,16 @@
             <td>{{ employee.Email }}</td>
             <td>{{ employee.PositionName }}</td>
             <td>{{ employee.DepartmentName }}</td>
-            <td class="text-align-right">{{ employee.Salary }}</td>
+            <td class="text-align-right">
+              {{
+                employee.Salary != null
+                  ? employee.Salary.toString().replace(
+                      /\B(?=(\d{3})+(?!\d))/g,
+                      "."
+                    )
+                  : null
+              }}
+            </td>
             <td class="text-align-center">{{ employee.MartialStatusName }}</td>
           </tr>
         </tbody>
@@ -261,6 +270,7 @@ export default {
   components: {
     EmployeeDetail,
   },
+
   created() {
     axios.get("http://api.manhnv.net/v1/employees").then((response) => {
       console.log(response);
@@ -350,6 +360,7 @@ export default {
           axios
             .delete("http://api.manhnv.net/v1/employees/" + employeeId)
             .then(function (response) {
+              console.log(response);
               seft2.btnRefreshOnClick();
               seft2.deleteTrue = false;
               $(".trEmployee").unbind("mouseenter mouseleave");
@@ -478,6 +489,7 @@ export default {
       moment: moment,
       deleteTrue: false,
       itemEmployees: [],
+      salaryDisplay: null,
       totalPage: null, //tổng số trang
       currentPage: 1, // trang hiện tại
       perPage: 50, //số record / 1 trang

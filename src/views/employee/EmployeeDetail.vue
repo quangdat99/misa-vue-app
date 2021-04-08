@@ -176,7 +176,7 @@
                 <!-- <input id="txtSalary" type="text" v-model="employee.Salary" /> -->
                 <input
                   id="txtSalary"
-                  type="text"
+                  type="number"
                   style="text-align: right"
                   :value="formMode == 'add' ? '' : employee.Salary"
                 />
@@ -224,6 +224,12 @@ import axios from "axios";
 import moment from "moment";
 import $ from "jquery";
 
+var newEmployee;
+
+// function numberWithCommas(x) {
+//   return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+// }
+
 export default {
   props: {
     isHide: { type: Boolean, default: true },
@@ -255,8 +261,36 @@ export default {
   updated() {
     // $('#txtEmployeeCode').
     if (this.isHide == false) {
-      console.log("Focus");
       $("#txtEmployeeCode").focus();
+      try {
+        $("#txtEmployeeCode").val(newEmployee.EmployeeCode);
+        $("#txtFullName").val(newEmployee.FullName);
+        $("#dtDateOfBirth").val(newEmployee.DateOfBirth);
+        $("#cbGender").val(newEmployee.Gender);
+        $("#txtIdentityNumber").val(newEmployee.IdentityNumber);
+        $("#txtIdentityDate").val(newEmployee.IdentityDate);
+        $("#txtIdentityPlace").val(newEmployee.IdentityPlace);
+        $("#txtEmail").val(newEmployee.Email);
+        $("#txtPhoneNumber").val(newEmployee.PhoneNumber);
+        $("#cbPositionId").val(newEmployee.PositionId);
+        $("#cbDepartmentId").val(newEmployee.DepartmentId);
+        $("#txtPersonalTaxCode").val(newEmployee.PersonalTaxCode);
+        $("#dtJoinDate").val(newEmployee.JoinDate);
+        $("#cbWorkStatus").val(newEmployee.WorkStatus);
+        // $("#txtSalary").on("focus", function () {
+        //   console.log("focuss");
+        //   $("#txtSalary").attr("type", "text");
+        //   $("#txtSalary").val(newEmployee.Salary);
+        // });
+        // $("#txtSalary").on("blur", function () {
+        //   console.log("blurrr");
+        //   $("#txtSalary").val(newEmployee.Salary);
+        // });
+        newEmployee = undefined;
+      } catch (error) {
+        return;
+      }
+
       // this.$refs["text-some-input"].focus();
     }
   },
@@ -287,7 +321,7 @@ export default {
       var JoinDate = $("#dtJoinDate").val();
       var WorkStatus = $("#cbWorkStatus").val();
 
-      var newEmployee = {
+      newEmployee = {
         EmployeeCode: EmployeeCode,
         FullName: FullName,
         DateOfBirth: DateOfBirth,
@@ -320,12 +354,14 @@ export default {
       } else {
         this.validateIdentityNumber = null;
       }
+      var checkedEmail = true;
       if (!Email) {
         this.validateEmail = "Yêu cầu nhập địa chỉ Email.";
       } else {
         var re = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
         if (!re.test(Email)) {
-          this.validateEmail = "Email không đúng định dạng.";
+          this.validateEmail = "Email phải có định dạng example@abc.xyz";
+          checkedEmail = false;
         } else {
           this.validateEmail = null;
         }
@@ -347,6 +383,7 @@ export default {
         FullName &&
         IdentityNumber &&
         Email &&
+        checkedEmail &&
         PhoneNumber &&
         !isNaN(PhoneNumber)
       ) {
@@ -386,23 +423,6 @@ export default {
               alert(error);
             });
         }
-      } else {
-        // $("#txtEmployeeCode").val(EmployeeCode);
-        // $("#txtFullName").val(FullName);
-        // $("#dtDateOfBirth").val(DateOfBirth);
-        // $("#cbGender").val(Gender);
-        // $("#txtIdentityNumber").val(IdentityNumber);
-        // $("#txtIdentityDate").val(IdentityDate);
-        // $("#txtIdentityPlace").val(IdentityPlace);
-        // $("#txtEmail").val(Email);
-        // $("#txtPhoneNumber").val(PhoneNumber);
-        // console.log($("#txtPhoneNumber").val());
-        // $("#cbPositionId").val(PositionId);
-        // $("#cbDepartmentId").val(DepartmentId);
-        // $("#txtPersonalTaxCode").val(PersonalTaxCode);
-        // $("#txtSalary").val(Salary);
-        // $("#dtJoinDate").val(JoinDate);
-        // $("#cbWorkStatus").val(WorkStatus);
       }
     },
   },
