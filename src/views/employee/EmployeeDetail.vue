@@ -29,7 +29,7 @@
               <div class="m-col">
                 <label>Mã nhân viên (<span>*</span>)</label>
                 <input
-                  autofocus
+                  ref="text-some-input"
                   :value="
                     formMode == 'add' ? newEmployeeCode : employee.EmployeeCode
                   "
@@ -252,7 +252,14 @@ export default {
         });
     },
   },
-
+  updated() {
+    // $('#txtEmployeeCode').
+    if (this.isHide == false) {
+      console.log("Focus");
+      $("#txtEmployeeCode").focus();
+      // this.$refs["text-some-input"].focus();
+    }
+  },
   methods: {
     btnCloseOnClick() {
       this.$emit("btnAddOnClick", true);
@@ -327,21 +334,13 @@ export default {
       if (!PhoneNumber) {
         this.validatePhoneNumber = "Yêu cầu nhập Số điện thoại.";
       } else {
-        this.validatePhoneNumber = null;
+        if (isNaN(PhoneNumber)) {
+          this.validatePhoneNumber = "Số điện thoại chỉ gồm các chữ số.";
+        } else {
+          this.validatePhoneNumber = null;
+        }
+        // this.validatePhoneNumber = null;
       }
-
-      if (isNaN(PhoneNumber)) {
-        this.validatePhoneNumber = "Số điện thoại chỉ gồm các chữ số.";
-      } else {
-        this.validatePhoneNumber = null;
-      }
-
-      // var checkEmployeeCode = false;
-      // this.employees.array.forEach(element => {
-
-      // });
-
-      // console.log(re.test(Email));
 
       if (
         EmployeeCode &&

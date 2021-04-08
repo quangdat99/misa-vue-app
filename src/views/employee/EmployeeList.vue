@@ -335,6 +335,7 @@ export default {
             console.log(response.data);
             this.newEmployeeCode = response.data.toString();
             this.isHideDialogDetail = false;
+            // this.$refs["text-some-input"].focus();
           });
         this.isHideDialogDetail = false;
       }
