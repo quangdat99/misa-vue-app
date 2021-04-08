@@ -36,7 +36,7 @@
                   id="txtEmployeeCode"
                   type="text"
                 />
-                <span>{{ validateEmployeeCode }}</span>
+                <span class="mes">{{ validateEmployeeCode }}</span>
               </div>
               <div class="m-col">
                 <label>Họ và tên (<span>*</span>)</label>
@@ -45,10 +45,10 @@
                   type="text"
                   :value="formMode == 'add' ? '' : employee.FullName"
                 />
-                <span>{{ validateFullName }}</span>
+                <span class="mes">{{ validateFullName }}</span>
               </div>
             </div>
-            <div class="m-row">
+            <div class="m-row" style="margin-bottom: 16px">
               <div class="m-col">
                 <label>Ngày sinh</label>
                 <input
@@ -77,7 +77,7 @@
                   type="text"
                   :value="formMode == 'add' ? '' : employee.IdentityNumber"
                 />
-                <span>{{ validateIdentityNumber }}</span>
+                <span class="mes">{{ validateIdentityNumber }}</span>
               </div>
               <div class="m-col">
                 <label>Ngày cấp</label>
@@ -88,7 +88,7 @@
                 />
               </div>
             </div>
-            <div class="m-row">
+            <div class="m-row" style="margin-bottom: 16px">
               <div class="m-col">
                 <label>Nơi cấp</label>
                 <input
@@ -107,7 +107,7 @@
                   type="text"
                   :value="formMode == 'add' ? '' : employee.Email"
                 />
-                <span>{{ validateEmail }}</span>
+                <span class="mes">{{ validateEmail }}</span>
               </div>
               <div class="m-col">
                 <label>Số điện thoại (<span>*</span>)</label>
@@ -116,14 +116,14 @@
                   type="text"
                   :value="formMode == 'add' ? '' : employee.PhoneNumber"
                 />
-                <span>{{ validatePhoneNumber }}</span>
+                <span class="mes">{{ validatePhoneNumber }}</span>
               </div>
             </div>
             <div class="body-title">
               <div class="title-text">B. THÔNG TIN CÔNG VIỆC:</div>
               <div class="title-container"></div>
             </div>
-            <div class="m-row">
+            <div class="m-row" style="margin-bottom: 16px">
               <div class="m-col">
                 <label>Vị trí</label>
                 <select
@@ -162,7 +162,7 @@
                 </select>
               </div>
             </div>
-            <div class="m-row">
+            <div class="m-row" style="margin-bottom: 16px">
               <div class="m-col">
                 <label>Mã số thuế cá nhân</label>
                 <input
@@ -438,15 +438,21 @@ export default {
   float: left;
   padding: 0 4px;
   box-sizing: border-box;
+  /* margin-bottom: 14px; */
 }
 .m-col span {
   color: red;
+}
+.m-col .mes {
+  height: 16px;
+  background-color: #fff;
+  display: block;
 }
 
 .m-row {
   width: 100%;
   display: flex;
-  margin-top: 8px;
+  /* margin-bottom: 14px; */
   position: relative;
 }
 
@@ -468,9 +474,9 @@ select {
   background-image: url("../../assets/icon/add.png");
 }
 .dialog .dialog-content {
-  height: 720px;
+  height: 730px;
   width: 740px;
-  top: 46%;
+  top: 44%;
   left: 42%;
 }
 
@@ -482,10 +488,11 @@ select {
   position: absolute;
   left: 205px;
   width: 555px;
+  /* height: 715px; */
 }
 .body-right .body-title {
   margin-left: 5px;
-  margin-top: 25px;
+  margin-top: 20px;
 }
 .body-right .title-text {
   font-size: 15px;
