@@ -133,7 +133,7 @@
                 employee.Salary != null
                   ? employee.Salary.toString().replace(
                       /\B(?=(\d{3})+(?!\d))/g,
-                      "."
+                      ","
                     )
                   : null
               }}
@@ -492,7 +492,7 @@ export default {
       salaryDisplay: null,
       totalPage: null, //tổng số trang
       currentPage: 1, // trang hiện tại
-      perPage: 50, //số record / 1 trang
+      perPage: 10, //số record / 1 trang
     };
   },
   computed: {},

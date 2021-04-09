@@ -175,10 +175,21 @@
                 <label>Mức lương cơ bản</label>
                 <!-- <input id="txtSalary" type="text" v-model="employee.Salary" /> -->
                 <input
+                  @focus="typeTextToNumber()"
+                  @blur="typeNumberToText()"
                   id="txtSalary"
-                  type="number"
+                  type="text"
                   style="text-align: right"
-                  :value="formMode == 'add' ? '' : employee.Salary"
+                  :value="
+                    formMode == 'add'
+                      ? ''
+                      : employee.Salary != null
+                      ? employee.Salary.toString().replace(
+                          /\B(?=(\d{3})+(?!\d))/g,
+                          ','
+                        )
+                      : null
+                  "
                 />
                 <span class="unit"> (VNĐ)</span>
               </div>
@@ -277,15 +288,14 @@ export default {
         $("#txtPersonalTaxCode").val(newEmployee.PersonalTaxCode);
         $("#dtJoinDate").val(newEmployee.JoinDate);
         $("#cbWorkStatus").val(newEmployee.WorkStatus);
-        // $("#txtSalary").on("focus", function () {
-        //   console.log("focuss");
-        //   $("#txtSalary").attr("type", "text");
-        //   $("#txtSalary").val(newEmployee.Salary);
-        // });
-        // $("#txtSalary").on("blur", function () {
-        //   console.log("blurrr");
-        //   $("#txtSalary").val(newEmployee.Salary);
-        // });
+        $("#txtSalary").val(
+          newEmployee.Salary != null
+            ? newEmployee.Salary.toString().replace(
+                /\B(?=(\d{3})+(?!\d))/g,
+                ","
+              )
+            : null
+        );
         newEmployee = undefined;
       } catch (error) {
         return;
@@ -295,6 +305,23 @@ export default {
     }
   },
   methods: {
+    typeTextToNumber() {
+      $("#txtSalary").val(parseInt($("#txtSalary").val().split(",").join("")));
+      $("#txtSalary").attr("type", "number");
+      $("#txtSalary").css("text-align", "left");
+    },
+    typeNumberToText() {
+      $("#txtSalary").attr("type", "text");
+      $("#txtSalary").val(
+        $("#txtSalary").val() != null
+          ? $("#txtSalary")
+              .val()
+              .toString()
+              .replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+          : null
+      );
+      $("#txtSalary").css("text-align", "right");
+    },
     btnCloseOnClick() {
       this.$emit("btnAddOnClick", true);
       this.validateEmployeeCode = null;
@@ -317,7 +344,7 @@ export default {
       var PositionId = $("#cbPositionId").val();
       var DepartmentId = $("#cbDepartmentId").val();
       var PersonalTaxCode = $("#txtPersonalTaxCode").val();
-      var Salary = $("#txtSalary").val();
+      var Salary = parseInt($("#txtSalary").val().split(",").join(""));
       var JoinDate = $("#dtJoinDate").val();
       var WorkStatus = $("#cbWorkStatus").val();
 
